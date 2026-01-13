@@ -1,0 +1,658 @@
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Verilog Project Explorer: Automatic Toll Collection System</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Fira+Code:wght@400;500&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #f8fafc; /* slate-50 */
+        }
+        .font-code {
+            font-family: 'Fira Code', monospace;
+        }
+        .highlight {
+            background-color: #dbeafe; /* blue-100 */
+            transition: background-color 0.2s ease-in-out;
+        }
+        .code-line:hover, .explanation-line:hover {
+             background-color: #dbeafe;
+        }
+        .explanation-line.no-explanation { opacity: 0.5; }
+        .active-tab {
+            color: #2563eb; /* blue-600 */
+            border-color: #2563eb;
+        }
+    </style>
+</head>
+<body class="text-slate-700">
+
+    <header class="bg-white/80 backdrop-blur-lg sticky top-0 z-50 border-b border-slate-200">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between items-center h-16">
+                <div class="flex-shrink-0">
+                    <h1 class="text-xl font-bold text-slate-800">Toll System Project</h1>
+                </div>
+                <nav class="hidden md:flex md:space-x-8">
+                    <a href="#overview" class="font-medium text-slate-600 hover:text-blue-600">Overview</a>
+                    <a href="#output" class="font-medium text-slate-600 hover:text-blue-600">Output</a>
+                    <a href="#flow" class="font-medium text-slate-600 hover:text-blue-600">System Flow</a>
+                    <a href="#explorer" class="font-medium text-slate-600 hover:text-blue-600">Code Explorer</a>
+                </nav>
+            </div>
+        </div>
+    </header>
+
+    <main>
+        <section id="overview" class="py-16 md:py-24 bg-white">
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+                <h2 class="text-base font-semibold text-blue-600 tracking-wide uppercase">DDCO Mini-Project</h2>
+                <p class="mt-2 text-4xl font-extrabold text-slate-900 tracking-tight sm:text-5xl">
+                    Automatic Toll Collection System
+                </p>
+                <div class="mt-8 max-w-3xl mx-auto">
+                    <h3 class="text-xl font-bold text-slate-800 mb-4">Theory of Operation</h3>
+                    <p class="text-lg text-slate-600 text-left">
+                        This project simulates an automated toll gate using digital logic. The process begins when a vehicle arrives at the toll booth, which is simulated by the testbench providing a unique vehicle ID. The system's controller, a Finite State Machine (FSM), receives this ID and initiates a transaction. It first reads the vehicle's current balance from a synchronous memory module. Once the balance is retrieved, the FSM compares it against the fixed toll fee.
+                        <br><br>
+                        If the balance is sufficient (greater than or equal to the toll amount), the FSM transitions to a success state. In this state, it issues a command to open the toll gate, activates a green light to signal the driver, and calculates the new balance. Crucially, it then writes this updated balance back to the memory, ensuring the deduction is recorded.
+                        <br><br>
+                        Conversely, if the balance is insufficient, the FSM transitions to a fail state. It ensures the gate remains closed and activates a red light to notify the driver. In this case, no balance update occurs. After either outcome, the system returns to its idle state, ready for the next vehicle.
+                    </p>
+                </div>
+            </div>
+             <div class="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 mt-12">
+                 <h3 class="text-2xl font-bold text-slate-800 text-center mb-8">System Architecture</h3>
+                 <div class="bg-slate-100 p-6 rounded-xl border border-slate-200">
+                    <div class="text-center mb-4 font-medium">Toll Fee: 50 Units</div>
+                    <div class="flex flex-col md:flex-row items-center justify-center space-y-4 md:space-y-0 md:space-x-4">
+                        <div class="text-center p-4 rounded-lg bg-white shadow-sm w-full md:w-auto">
+                            <p class="font-code font-medium text-purple-600">testbench.v</p>
+                            <p class="text-sm text-slate-500">Simulator</p>
+                        </div>
+                        <div class="text-2xl font-bold text-slate-400 transform -rotate-90 md:rotate-0">→</div>
+                         <div class="border-4 border-dashed border-slate-300 rounded-xl p-4 w-full">
+                            <div class="text-center mb-4">
+                                <p class="font-code font-medium text-red-600">Toll_System_Top.v</p>
+                                <p class="text-sm text-slate-500">Top-Level "Motherboard"</p>
+                            </div>
+                             <div class="flex flex-col md:flex-row gap-4 justify-center items-stretch">
+                                <div class="text-center p-4 rounded-lg bg-white shadow-sm flex-1">
+                                    <p class="font-code font-medium text-blue-600">Toll_Controller.v</p>
+                                    <p class="text-sm text-slate-500">Control Unit (FSM)</p>
+                                </div>
+                                <div class="flex items-center text-xl font-bold text-slate-400">
+                                    <span class="transform rotate-90 md:rotate-0">↔</span>
+                                </div>
+                                <div class="text-center p-4 rounded-lg bg-white shadow-sm flex-1">
+                                    <p class="font-code font-medium text-green-600">Balance_Memory.v</p>
+                                    <p class="text-sm text-slate-500">Memory / Database</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                 </div>
+                 <p class="text-center mt-4 text-slate-500">The testbench provides inputs to the top-level module, which connects the FSM (the brain) and the memory (the database) to form a complete system.</p>
+            </div>
+        </section>
+
+        <section id="output" class="py-16 md:py-24 bg-slate-50">
+            <div class="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
+                <div class="text-center">
+                    <h2 class="text-3xl font-extrabold text-slate-900 tracking-tight">Final Simulation Output</h2>
+                    <p class="mt-4 max-w-2xl mx-auto text-lg text-slate-600">This is the final output from the Icarus Verilog simulator after running the comprehensive testbench.</p>
+                </div>
+                <div class="mt-12 bg-slate-800 rounded-xl shadow-2xl overflow-hidden">
+                    <div class="px-4 py-2 bg-slate-900">
+                        <div class="flex items-center space-x-2">
+                            <div class="w-3 h-3 bg-red-500 rounded-full"></div>
+                            <div class="w-3 h-3 bg-yellow-400 rounded-full"></div>
+                            <div class="w-3 h-3 bg-green-500 rounded-full"></div>
+                        </div>
+                    </div>
+                    <pre class="font-code text-sm text-white p-6 overflow-x-auto"><code>--- Automatic Toll System Simulation (Final) ---
+--- Toll Fee is set to 50 units ---
+
+At time 10.00ns: Reset is released. System is IDLE.
+
+--- Test Case 1: Vehicle with Sufficient Balance (ID: 02, Bal: 200) ---
+At time 20.00ns: STATUS  -> Transaction PASSED correctly.
+At time 20.00ns: DISPLAY -> [GREEN] Have a safe journey!
+At time 20.00ns: ACTION  -> Gate is now OPEN.
+
+--- Test Case 2: Vehicle with Insufficient Balance (ID: 01, Bal: 40) ---
+At time 29.00ns: STATUS  -> Transaction BLOCKED correctly.
+At time 29.00ns: DISPLAY -> [RED] Insufficient Balance!
+At time 29.00ns: ACTION  -> Gate remains CLOSED.
+
+--- Test Case 3: Vehicle with Exact Balance (ID: 04, Bal: 50) ---
+At time 38.00ns: STATUS  -> Transaction PASSED correctly.
+At time 38.00ns: DISPLAY -> [GREEN] Have a safe journey!
+At time 38.00ns: ACTION  -> Gate is now OPEN. Balance updated.
+
+--- Test Case 4: Re-checking Vehicle 4 to confirm deduction (Bal: 0) ---
+At time 47.00ns: STATUS  -> Transaction BLOCKED correctly (Balance is now 0).
+At time 47.00ns: DISPLAY -> [RED] Insufficient Balance!
+At time 47.00ns: ACTION  -> Gate remains CLOSED.
+
+--- Simulation Finished ---
+</code></pre>
+                </div>
+                <div class="mt-8 space-y-4 text-slate-600">
+                    <p><strong>Initialization:</strong> The simulation starts by setting the toll fee to 50 and releasing the system reset at 10ns, confirming the FSM is in its `S_IDLE` state.</p>
+                    <p><strong>Test Case 1 (Success):</strong> A vehicle with a balance of 200 arrives. Since 200 >= 50, the transaction passes. The system correctly opens the gate, shows a green light, and updates the balance in memory to 150 (200 - 50).</p>
+                    <p><strong>Test Case 2 (Failure):</strong> A vehicle with a balance of 40 arrives. Since 40 < 50, the transaction is blocked. The system correctly keeps the gate closed and shows a red light.</p>
+                    <p><strong>Test Case 3 (Boundary Condition):</strong> A vehicle with an exact balance of 50 arrives. Since 50 >= 50, the transaction passes. The gate opens, and the balance is updated to 0 (50 - 50).</p>
+                    <p><strong>Test Case 4 (Verification):</strong> The same vehicle from Test Case 3 is checked again. Its balance is now 0. Since 0 < 50, the transaction is correctly blocked. This confirms that the memory write in the previous step was successful and the data is persistent.</p>
+                </div>
+            </div>
+        </section>
+
+        <section id="flow" class="py-16 md:py-24">
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                <div class="text-center">
+                    <h2 class="text-3xl font-extrabold text-slate-900 tracking-tight">How The System Works (Final Flow)</h2>
+                    <p class="mt-4 max-w-2xl mx-auto text-lg text-slate-600">A step-by-step walkthrough of the final FSM, adapted for synchronous memory.</p>
+                </div>
+
+                <div class="mt-12 space-y-8 relative before:absolute before:inset-0 before:ml-5 before:h-full before:w-0.5 before:bg-slate-200 before:md:mx-auto before:md:w-0.5">
+                    <!-- Step 1 -->
+                    <div class="relative pl-10 md:pl-0 md:flex md:items-center">
+                        <div class="md:w-1/2 md:pr-8">
+                            <div class="bg-white p-6 rounded-xl border border-slate-200 shadow-sm">
+                                <h4 class="font-bold text-lg text-slate-800">1. Waiting in `S_IDLE`</h4>
+                                <p class="mt-2 text-slate-600">The FSM waits for a car. The gate is closed and the display is off.</p>
+                            </div>
+                        </div>
+                        <div class="hidden md:block absolute left-1/2 -translate-x-1/2 w-10 h-10 bg-blue-500 rounded-full flex items-center justify-center text-white font-bold border-4 border-white">1</div>
+                    </div>
+                    <!-- Step 2 -->
+                     <div class="relative pl-10 md:pl-0 md:flex md:flex-row-reverse md:items-center">
+                        <div class="md:w-1/2 md:pl-8">
+                            <div class="bg-white p-6 rounded-xl border border-slate-200 shadow-sm">
+                                <h4 class="font-bold text-lg text-slate-800">2. Car Arrives → `S_READ_MEM`</h4>
+                                <p class="mt-2 text-slate-600">On `start_transaction`, the FSM sends the vehicle's ID to the memory's address port.</p>
+                            </div>
+                        </div>
+                        <div class="hidden md:block absolute left-1/2 -translate-x-1/2 w-10 h-10 bg-blue-500 rounded-full flex items-center justify-center text-white font-bold border-4 border-white">2</div>
+                    </div>
+                    <!-- Step 3 -->
+                    <div class="relative pl-10 md:pl-0 md:flex md:items-center">
+                        <div class="md:w-1/2 md:pr-8">
+                            <div class="bg-white p-6 rounded-xl border border-slate-200 shadow-sm">
+                                <h4 class="font-bold text-lg text-slate-800">3. Wait for Memory → `S_WAIT_DATA`</h4>
+                                <p class="mt-2 text-slate-600">The FSM enters this new state for one clock cycle. This pause is crucial because the synchronous memory needs one cycle to fetch the data.</p>
+                            </div>
+                        </div>
+                        <div class="hidden md:block absolute left-1/2 -translate-x-1/2 w-10 h-10 bg-blue-500 rounded-full flex items-center justify-center text-white font-bold border-4 border-white">3</div>
+                    </div>
+                    <!-- Step 4 -->
+                     <div class="relative pl-10 md:pl-0 md:flex md:flex-row-reverse md:items-center">
+                        <div class="md:w-1/2 md:pl-8">
+                            <div class="bg-white p-6 rounded-xl border border-slate-200 shadow-sm">
+                                <h4 class="font-bold text-lg text-slate-800">4. Check Balance → `S_CHECK_BALANCE`</h4>
+                                <p class="mt-2 text-slate-600">The balance data is now valid. The FSM compares it to the `TOLL_AMOUNT` to decide whether to go to `S_SUCCESS` or `S_FAIL`.</p>
+                            </div>
+                        </div>
+                        <div class="hidden md:block absolute left-1/2 -translate-x-1/2 w-10 h-10 bg-blue-500 rounded-full flex items-center justify-center text-white font-bold border-4 border-white">4</div>
+                    </div>
+                    <!-- Step 5 -->
+                    <div class="relative pl-10 md:pl-0 md:flex md:items-center">
+                        <div class="md:w-1/2 md:pr-8">
+                            <div class="bg-white p-6 rounded-xl border border-slate-200 shadow-sm">
+                                <h4 class="font-bold text-lg text-slate-800">5A. Success Path → `S_SUCCESS`</h4>
+                                <p class="mt-2 text-slate-600">If balance is sufficient, the FSM opens the gate, turns on the green light, and issues a write command to memory with the updated balance.</p>
+                            </div>
+                        </div>
+                        <div class="hidden md:block absolute left-1/2 -translate-x-1/2 w-10 h-10 bg-green-500 rounded-full flex items-center justify-center text-white font-bold border-4 border-white">✓</div>
+                    </div>
+                    <!-- Step 6 -->
+                    <div class="relative pl-10 md:pl-0 md:flex md:flex-row-reverse md:items-center">
+                        <div class="md:w-1/2 md:pl-8">
+                             <div class="bg-white p-6 rounded-xl border border-slate-200 shadow-sm">
+                                <h4 class="font-bold text-lg text-slate-800">5B. Fail Path → `S_FAIL`</h4>
+                                <p class="mt-2 text-slate-600">If balance is low, the FSM keeps the gate closed and turns on the red light. No memory write occurs.</p>
+                            </div>
+                        </div>
+                        <div class="hidden md:block absolute left-1/2 -translate-x-1/2 w-10 h-10 bg-red-500 rounded-full flex items-center justify-center text-white font-bold border-4 border-white">✗</div>
+                    </div>
+                    <!-- Step 7 -->
+                     <div class="relative pl-10 md:pl-0 md:flex md:items-center">
+                        <div class="md:w-1/2 md:pr-8">
+                             <div class="bg-white p-6 rounded-xl border border-slate-200 shadow-sm">
+                                <h4 class="font-bold text-lg text-slate-800">6. Finish and Return</h4>
+                                <p class="mt-2 text-slate-600">From `S_SUCCESS` or `S_FAIL`, the FSM asserts `transaction_done` and returns to `S_IDLE`, ready for the next car.</p>
+                            </div>
+                        </div>
+                        <div class="hidden md:block absolute left-1/2 -translate-x-1/2 w-10 h-10 bg-blue-500 rounded-full flex items-center justify-center text-white font-bold border-4 border-white">6</div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section id="explorer" class="py-16 md:py-24 bg-white">
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                <div class="text-center">
+                    <h2 class="text-3xl font-extrabold text-slate-900 tracking-tight">Interactive Code Explorer</h2>
+                    <p class="mt-4 max-w-2xl mx-auto text-lg text-slate-600">Dive into the Verilog code. Hover over any line of code to see its corresponding explanation highlighted.</p>
+                </div>
+
+                <div class="mt-12">
+                    <div class="border-b border-slate-200">
+                        <nav id="code-tabs" class="-mb-px flex space-x-6" aria-label="Tabs">
+                            <button data-target="controller" class="code-tab active-tab text-blue-600 border-blue-600 whitespace-nowrap py-4 px-1 border-b-2 font-medium text-sm">Toll_Controller.v</button>
+                            <button data-target="memory" class="code-tab text-slate-500 hover:text-slate-700 border-transparent whitespace-nowrap py-4 px-1 border-b-2 font-medium text-sm">Balance_Memory.v</button>
+                            <button data-target="top" class="code-tab text-slate-500 hover:text-slate-700 border-transparent whitespace-nowrap py-4 px-1 border-b-2 font-medium text-sm">Toll_System_Top.v</button>
+                            <button data-target="tb" class="code-tab text-slate-500 hover:text-slate-700 border-transparent whitespace-nowrap py-4 px-1 border-b-2 font-medium text-sm">testbench.v</button>
+                        </nav>
+                    </div>
+
+                    <div id="code-content" class="mt-8">
+                        <div id="controller-content" class="code-panel"></div>
+                        <div id="memory-content" class="code-panel hidden"></div>
+                        <div id="top-content" class="code-panel hidden"></div>
+                        <div id="tb-content" class="code-panel hidden"></div>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <footer class="bg-slate-800 text-slate-400">
+        <div class="max-w-7xl mx-auto py-12 px-4 sm:px-6 lg:px-8 text-center">
+            <p>DDCO Mini-Project Interactive Explorer</p>
+            <p class="mt-2 text-sm">Generated to demonstrate the system's architecture and Verilog implementation.</p>
+        </div>
+    </footer>
+
+<script>
+    const codeData = {
+        controller: [
+            { line: 1, code: 'module Toll_Controller(', explanation: 'Begins the definition of the Toll_Controller module.' },
+            { line: 2, code: '    clk, reset, start_transaction, vehicle_id_in, balance_from_mem,', explanation: 'List of input ports.' },
+            { line: 3, code: '    gate_open, display_signal, transaction_status, transaction_done,', explanation: 'List of output ports.' },
+            { line: 4, code: '    mem_addr, mem_write_enable, data_to_mem', explanation: 'List of output ports for memory control.' },
+            { line: 5, code: ');', explanation: 'Ends the port list.' },
+            { line: 6, code: '    input clk;', explanation: 'Declares `clk` as an input.' },
+            { line: 7, code: '    input reset;', explanation: 'Declares `reset` as an input.' },
+            { line: 8, code: '    input start_transaction;', explanation: 'Declares `start_transaction` as an input.' },
+            { line: 9, code: '    input [3:0] vehicle_id_in;', explanation: 'Declares `vehicle_id_in` as a 4-bit input.' },
+            { line: 10, code: '    input [7:0] balance_from_mem;', explanation: 'Declares `balance_from_mem` as an 8-bit input.' },
+            { line: 11, code: '', explanation: '' },
+            { line: 12, code: '    output reg gate_open;', explanation: 'Declares `gate_open` as a registered output.' },
+            { line: 13, code: '    output reg [1:0] display_signal;', explanation: 'Declares `display_signal` as a 2-bit registered output.' },
+            { line: 14, code: '    output reg [1:0] transaction_status;', explanation: 'Declares `transaction_status` as a 2-bit registered output.' },
+            { line: 15, code: '    output reg transaction_done;', explanation: 'Declares `transaction_done` as a registered output.' },
+            { line: 16, code: '    output reg [3:0] mem_addr;', explanation: 'Declares `mem_addr` as a 4-bit registered output.' },
+            { line: 17, code: '    output reg mem_write_enable;', explanation: 'Declares `mem_write_enable` as a registered output.' },
+            { line: 18, code: '    output reg [7:0] data_to_mem;', explanation: 'Declares `data_to_mem` as an 8-bit registered output.' },
+            { line: 19, code: '', explanation: '' },
+            { line: 20, code: '    localparam TOLL_AMOUNT = 8\'d50;', explanation: 'Defines a local constant for the toll fee (50).' },
+            { line: 21, code: '', explanation: '' },
+            { line: 22, code: '    localparam S_IDLE = 3\'b000;', explanation: 'Defines the binary code for the IDLE state.' },
+            { line: 23, code: '    localparam S_READ_MEM = 3\'b001;', explanation: 'Defines the code for the state where the memory address is set.' },
+            { line: 24, code: '    localparam S_WAIT_DATA = 3\'b010;', explanation: 'NEW STATE: Defines the code for the state that waits one cycle for synchronous memory.' },
+            { line: 25, code: '    localparam S_CHECK_BALANCE = 3\'b011;', explanation: 'Defines the code for the state where the balance is checked.' },
+            { line: 26, code: '    localparam S_SUCCESS = 3\'b100;', explanation: 'Defines the code for the SUCCESS state.' },
+            { line: 27, code: '    localparam S_FAIL = 3\'b101;', explanation: 'Defines the code for the FAIL state.' },
+            { line: 28, code: '', explanation: '' },
+            { line: 29, code: '    reg [2:0] state, next_state;', explanation: 'Declares two 3-bit registers to hold the FSM\'s current and next state.' },
+            { line: 30, code: '', explanation: '' },
+            { line: 31, code: '    // Combinational logic for next state calculation', explanation: 'Comment for the next state logic block.' },
+            { line: 32, code: '    always @(*) begin', explanation: 'Starts the combinational block for calculating `next_state`.' },
+            { line: 33, code: '        next_state = state;', explanation: 'By default, the next state is the current state to prevent latches.' },
+            { line: 34, code: '        case(state)', explanation: 'A case statement to determine logic based on the current state.' },
+            { line: 35, code: '            S_IDLE: if (start_transaction) next_state = S_READ_MEM;', explanation: 'If in IDLE and a transaction starts, go to READ_MEM.' },
+            { line: 36, code: '            S_READ_MEM: next_state = S_WAIT_DATA;', explanation: 'After setting the address, always go to WAIT_DATA.' },
+            { line: 37, code: '            S_WAIT_DATA: next_state = S_CHECK_BALANCE;', explanation: 'After waiting one cycle, the data is ready, so go to CHECK_BALANCE.' },
+            { line: 38, code: '            S_CHECK_BALANCE: begin', explanation: 'Begins the logic for the CHECK_BALANCE state.' },
+            { line: 39, code: '                if (balance_from_mem >= TOLL_AMOUNT)', explanation: 'Checks if the retrieved balance is sufficient.' },
+            { line: 40, code: '                    next_state = S_SUCCESS;', explanation: 'If balance is sufficient, go to SUCCESS.' },
+            { line: 41, code: '                else', explanation: 'Otherwise...' },
+            { line: 42, code: '                    next_state = S_FAIL;', explanation: '...go to FAIL.' },
+            { line: 43, code: '            end', explanation: 'Ends the CHECK_BALANCE block.' },
+            { line: 44, code: '            S_SUCCESS: next_state = S_IDLE;', explanation: 'From SUCCESS, always return to IDLE on the next clock cycle.' },
+            { line: 45, code: '            S_FAIL: next_state = S_IDLE;', explanation: 'From FAIL, always return to IDLE on the next clock cycle.' },
+            { line: 46, code: '            default: next_state = S_IDLE;', explanation: 'A default case to prevent latches and handle unknown states.' },
+            { line: 47, code: '        endcase', explanation: 'Ends the case statement.' },
+            { line: 48, code: '    end', explanation: 'Ends the combinational `always` block.' },
+            { line: 49, code: '', explanation: '' },
+            { line: 50, code: '    // Sequential logic for state and output registers', explanation: 'Comment for the sequential logic block.' },
+            { line: 51, code: '    always @(posedge clk or posedge reset) begin', explanation: 'Starts the sequential block, sensitive to clock edge and reset.' },
+            { line: 52, code: '        if (reset) begin', explanation: 'If reset is active...' },
+            { line: 53, code: '            state <= S_IDLE;', explanation: '...force the state to IDLE and reset all outputs.' },
+            { line: 54, code: '            gate_open <= 1\'b0;', explanation: '...set gate_open to 0 (closed).' },
+            { line: 55, code: '            display_signal <= 2\'b00;', explanation: '...set display_signal to 00 (OFF).' },
+            { line: 56, code: '            transaction_status <= 2\'b00;', explanation: '...set transaction_status to 00 (Idle).' },
+            { line: 57, code: '            transaction_done <= 1\'b0;', explanation: '...set transaction_done to 0.' },
+            { line: 58, code: '            mem_addr <= 4\'b0000;', explanation: '...set mem_addr to 0.' },
+            { line: 59, code: '            mem_write_enable <= 1\'b0;', explanation: '...de-assert write enable.' },
+            { line: 60, code: '            data_to_mem <= 8\'d0;', explanation: '...set data_to_mem to 0.' },
+            { line: 61, code: '        end else begin', explanation: 'If not in reset...' },
+            { line: 62, code: '            state <= next_state;', explanation: '...update the state register on the clock edge.' },
+            { line: 63, code: '            transaction_done <= 1\'b0;', explanation: 'Default `transaction_done` to low.' },
+            { line: 64, code: '            mem_write_enable <= 1\'b0;', explanation: 'Default `mem_write_enable` to low.' },
+            { line: 65, code: '', explanation: '' },
+            { line: 66, code: '            case(state)', explanation: 'A second case statement to set the registered outputs based on the current state.' },
+            { line: 67, code: '                S_IDLE: begin', explanation: 'Outputs for the IDLE state.' },
+            { line: 68, code: '                    gate_open <= 1\'b0;', explanation: 'Gate is closed.' },
+            { line: 69, code: '                    display_signal <= 2\'b00;', explanation: 'Display is OFF.' },
+            { line: 70, code: '                    transaction_status <= 2\'b00;', explanation: 'Status is Idle.' },
+            { line: 71, code: '                end', explanation: 'Ends IDLE state output logic.' },
+            { line: 72, code: '                S_READ_MEM: begin', explanation: 'Action for the READ_MEM state.' },
+            { line: 73, code: '                    mem_addr <= vehicle_id_in;', explanation: 'Send the vehicle ID to the memory address port.' },
+            { line: 74, code: '                end', explanation: 'Ends READ_MEM state logic.' },
+            { line: 75, code: '                S_WAIT_DATA: begin', explanation: 'Action for the WAIT_DATA state.' },
+            { line: 76, code: '                    // Do nothing, just wait for memory data to be valid', explanation: 'This state simply introduces a one-cycle delay.' },
+            { line: 77, code: '                end', explanation: 'Ends WAIT_DATA state logic.' },
+            { line: 78, code: '                S_CHECK_BALANCE: begin', explanation: 'No output changes in this state; it is purely for the combinational decision.' },
+            { line: 79, code: '                end', explanation: '' },
+            { line: 80, code: '                S_SUCCESS: begin', explanation: 'Outputs for the SUCCESS state.' },
+            { line: 81, code: '                    gate_open <= 1\'b1;', explanation: 'Open the gate.' },
+            { line: 82, code: '                    display_signal <= 2\'b01;', explanation: 'Set display to GREEN.' },
+            { line: 83, code: '                    transaction_status <= 2\'b01;', explanation: 'Set status to PASS.' },
+            { line: 84, code: '                    transaction_done <= 1\'b1;', explanation: 'Signal that the transaction is finished.' },
+            { line: 85, code: '                    mem_write_enable <= 1\'b1;', explanation: 'Assert write enable to update the balance.' },
+            { line: 86, code: '                    data_to_mem <= balance_from_mem - TOLL_AMOUNT;', explanation: 'Calculate and send the new balance to memory.' },
+            { line: 87, code: '                end', explanation: 'Ends SUCCESS state logic.' },
+            { line: 88, code: '                S_FAIL: begin', explanation: 'Outputs for the FAIL state.' },
+            { line: 89, code: '                    gate_open <= 1\'b0;', explanation: 'Keep the gate closed.' },
+            { line: 90, code: '                    display_signal <= 2\'b10;', explanation: 'Set display to RED.' },
+            { line: 91, code: '                    transaction_status <= 2\'b10;', explanation: 'Set status to FAIL.' },
+            { line: 92, code: '                    transaction_done <= 1\'b1;', explanation: 'Signal that the transaction is finished.' },
+            { line: 93, code: '                end', explanation: 'Ends FAIL state logic.' },
+            { line: 94, code: '            endcase', explanation: 'Ends the output case statement.' },
+            { line: 95, code: '        end', explanation: 'Ends the main `else` block.' },
+            { line: 96, code: '    end', explanation: 'Ends the sequential `always` block.' },
+            { line: 97, code: 'endmodule', explanation: 'Ends the controller module definition.' }
+        ],
+        memory: [
+            { line: 1, code: 'module Balance_Memory #(', explanation: 'Begins the definition of the parameterized Balance_Memory module.' },
+            { line: 2, code: '    parameter DATA_WIDTH = 8,', explanation: 'Defines a parameter for the data width (8 bits for balance).' },
+            { line: 3, code: '    parameter ADDR_WIDTH = 4', explanation: 'Defines a parameter for the address width (4 bits for vehicle ID).' },
+            { line: 4, code: ') (', explanation: 'Start of the port list.' },
+            { line: 5, code: '    input clk,', explanation: 'Input port for the system clock.' },
+            { line: 6, code: '    input [ADDR_WIDTH-1:0] addr,', explanation: 'Input for the memory address, using the parameter.' },
+            { line: 7, code: '    input write_enable,', explanation: 'Input signal to enable a write operation.' },
+            { line: 8, code: '    input [DATA_WIDTH-1:0] data_in,', explanation: 'Input for the data to be written, using the parameter.' },
+            { line: 9, code: '    output reg [DATA_WIDTH-1:0] data_out', explanation: 'Output for the data being read, defined as a register.' },
+            { line: 10, code: ');', explanation: 'Ends the port list.' },
+            { line: 11, code: '', explanation: '' },
+            { line: 12, code: '    // Memory array: 2^ADDR_WIDTH entries, each DATA_WIDTH bits wide', explanation: 'Comment describing the memory array.' },
+            { line: 13, code: '    reg [DATA_WIDTH-1:0] mem [(1<<ADDR_WIDTH)-1:0];', explanation: 'This is the core storage: an array of registers.' },
+            { line: 14, code: '', explanation: '' },
+            { line: 15, code: '    // Pre-load memory with some initial values for the testbench', explanation: 'Comment for the initial block.' },
+            { line: 16, code: '    initial begin', explanation: 'An `initial` block runs once at the start of simulation.' },
+            { line: 17, code: '        mem[0] = 100;', explanation: 'Initializes the balance for vehicle with ID 0 to 100.' },
+            { line: 18, code: '        mem[1] = 40;  // Test Case 2: Insufficient balance', explanation: 'Initializes the balance for vehicle ID 1 to 40.' },
+            { line: 19, code: '        mem[2] = 200; // Test Case 1: Sufficient balance', explanation: 'Initializes the balance for vehicle ID 2 to 200.' },
+            { line: 20, code: '        mem[3] = 75;', explanation: 'Initializes the balance for vehicle ID 3 to 75.' },
+            { line: 21, code: '        mem[4] = 50;  // Test Case 3: Exact balance', explanation: 'Initializes the balance for vehicle ID 4 to 50.' },
+            { line: 22, code: '        mem[5] = 120;', explanation: 'Initializes the balance for vehicle ID 5 to 120.' },
+            { line: 23, code: '    end', explanation: 'Ends the initial block.' },
+            { line: 24, code: '', explanation: '' },
+            { line: 25, code: '    // Synchronous read/write logic', explanation: 'Comment for the sequential block.' },
+            { line: 26, code: '    always @(posedge clk) begin', explanation: 'A sequential block that executes on every rising clock edge.' },
+            { line: 27, code: '        // Read operation: Output the data at the given address.', explanation: 'Comment for the synchronous read.' },
+            { line: 28, code: '        // The result will be available on the next clock cycle.', explanation: 'Comment clarifying the read timing.' },
+            { line: 29, code: '        data_out <= mem[addr];', explanation: 'On every clock edge, the output register is updated with the memory content at the current address.' },
+            { line: 30, code: '', explanation: '' },
+            { line: 31, code: '        // Write operation', explanation: 'Comment for the write logic.' },
+            { line: 32, code: '        if (write_enable) begin', explanation: 'Checks if the write signal from the controller is active.' },
+            { line: 33, code: '            mem[addr] <= data_in;', explanation: 'If so, it updates the memory content at the given address with the new data.' },
+            { line: 34, code: '        end', explanation: 'Ends the if statement.' },
+            { line: 35, code: '    end', explanation: 'Ends the sequential logic block.' },
+            { line: 36, code: '', explanation: '' },
+            { line: 37, code: 'endmodule', explanation: 'Ends the memory module.' }
+        ],
+        top: [
+            { line: 1, code: 'module Toll_System_Top(', explanation: 'Defines the top-level module.' },
+            { line: 2, code: '    clk, reset, start_transaction, vehicle_id_in,', explanation: 'List of input ports.' },
+            { line: 3, code: '    gate_open, display_signal, transaction_status, transaction_done', explanation: 'List of output ports.' },
+            { line: 4, code: ');', explanation: 'Ends the port list.' },
+            { line: 5, code: '    input clk;', explanation: 'Declares `clk` as an input.' },
+            { line: 6, code: '    input reset;', explanation: 'Declares `reset` as an input.' },
+            { line: 7, code: '    input start_transaction;', explanation: 'Declares `start_transaction` as an input.' },
+            { line: 8, code: '    input [3:0] vehicle_id_in;', explanation: 'Declares `vehicle_id_in` as a 4-bit input.' },
+            { line: 9, code: '', explanation: '' },
+            { line: 10, code: '    output gate_open;', explanation: 'Declares `gate_open` as an output.' },
+            { line: 11, code: '    output [1:0] display_signal;', explanation: 'Declares `display_signal` as a 2-bit output.' },
+            { line: 12, code: '    output [1:0] transaction_status;', explanation: 'Declares `transaction_status` as a 2-bit output.' },
+            { line: 13, code: '    output transaction_done;', explanation: 'Declares `transaction_done` as an output.' },
+            { line: 14, code: '', explanation: '' },
+            { line: 15, code: '    // Internal wires for connecting the modules', explanation: 'Comment for the wire declarations.' },
+            { line: 16, code: '    wire [7:0] balance_from_mem;', explanation: 'An internal wire to connect memory output to controller input.' },
+            { line: 17, code: '    wire [3:0] mem_addr_wire;', explanation: 'An internal wire for the memory address.' },
+            { line: 18, code: '    wire mem_write_enable_wire;', explanation: 'An internal wire for the memory write enable signal.' },
+            { line: 19, code: '    wire [7:0] data_to_mem_wire;', explanation: 'An internal wire for the data being written to memory.' },
+            { line: 20, code: '', explanation: '' },
+            { line: 21, code: '    // Instantiate the Controller', explanation: 'Comment for the controller instantiation.' },
+            { line: 22, code: '    Toll_Controller controller (', explanation: 'Instantiates the controller module, giving it the name `controller`.' },
+            { line: 23, code: '        .clk(clk),', explanation: 'Connects the top-level `clk` to the controller\'s `clk` port.' },
+            { line: 24, code: '        .reset(reset),', explanation: 'Connects the top-level `reset` to the controller\'s `reset` port.' },
+            { line: 25, code: '        .start_transaction(start_transaction),', explanation: 'Connects the top-level `start_transaction` to the controller\'s port.' },
+            { line: 26, code: '        .vehicle_id_in(vehicle_id_in),', explanation: 'Connects the top-level `vehicle_id_in` to the controller\'s port.' },
+            { line: 27, code: '        .balance_from_mem(balance_from_mem),', explanation: 'Connects the internal wire to the controller\'s `balance_from_mem` input.' },
+            { line: 28, code: '        .gate_open(gate_open),', explanation: 'Connects the controller\'s `gate_open` output to the top-level output.' },
+            { line: 29, code: '        .display_signal(display_signal),', explanation: 'Connects the controller\'s `display_signal` output to the top-level output.' },
+            { line: 30, code: '        .transaction_status(transaction_status),', explanation: 'Connects the controller\'s `transaction_status` output to the top-level output.' },
+            { line: 31, code: '        .transaction_done(transaction_done),', explanation: 'Connects the controller\'s `transaction_done` output to the top-level output.' },
+            { line: 32, code: '        .mem_addr(mem_addr_wire),', explanation: 'Connects the controller\'s address output to the internal wire.' },
+            { line: 33, code: '        .mem_write_enable(mem_write_enable_wire),', explanation: 'Connects the controller\'s write enable output to the internal wire.' },
+            { line: 34, code: '        .data_to_mem(data_to_mem_wire)', explanation: 'Connects the controller\'s data output to the internal wire.' },
+            { line: 35, code: '    );', explanation: 'Ends the controller instantiation.' },
+            { line: 36, code: '', explanation: '' },
+            { line: 37, code: '    // Instantiate the Memory', explanation: 'Comment for the memory instantiation.' },
+            { line: 38, code: '    Balance_Memory memory (', explanation: 'Instantiates the memory module, giving it the name `memory`.' },
+            { line: 39, code: '        .clk(clk),', explanation: 'Connects the same top-level clock to the memory.' },
+            { line: 40, code: '        .addr(mem_addr_wire),', explanation: 'Connects the internal address wire to the memory\'s address input.' },
+            { line: 41, code: '        .data_in(data_to_mem_wire),', explanation: 'Connects the internal data wire to the memory\'s data input.' },
+            { line: 42, code: '        .write_enable(mem_write_enable_wire),', explanation: 'Connects the internal write enable wire to the memory\'s input.' },
+            { line: 43, code: '        .data_out(balance_from_mem)', explanation: 'Connects the memory\'s data output to the internal `balance_from_mem` wire.' },
+            { line: 44, code: '    );', explanation: 'Ends the memory instantiation.' },
+            { line: 45, code: '', explanation: '' },
+            { line: 46, code: 'endmodule', explanation: 'Ends the top-level module.' }
+        ],
+        tb: [
+            { line: 1, code: '`timescale 1ns/1ps', explanation: 'Sets simulation time units. `#1` means 1 nanosecond with 1 picosecond precision.' },
+            { line: 2, code: '', explanation: '' },
+            { line: 3, code: 'module testbench;', explanation: 'Defines the testbench module, which has no external ports.' },
+            { line: 4, code: '', explanation: '' },
+            { line: 5, code: '    reg clk;', explanation: 'A register to generate the clock signal.' },
+            { line: 6, code: '    reg reset;', explanation: 'A register to control the system reset.' },
+            { line: 7, code: '    reg start_transaction;', explanation: 'A register to initiate a transaction.' },
+            { line: 8, code: '    reg [3:0] vehicle_id_in;', explanation: 'A 4-bit register to supply the vehicle ID for testing.' },
+            { line: 9, code: '', explanation: '' },
+            { line: 10, code: '    wire gate_open;', explanation: 'A wire to monitor the `gate_open` output from the design.' },
+            { line: 11, code: '    wire [1:0] display_signal;', explanation: 'A 2-bit wire to monitor the display signal (Off, Green, Red).' },
+            { line: 12, code: '    wire [1:0] transaction_status;', explanation: 'A 2-bit wire to monitor the transaction status (Idle, Pass, Fail).' },
+            { line: 13, code: '    wire transaction_done;', explanation: 'A wire to detect when the FSM has completed a transaction.' },
+            { line: 14, code: '', explanation: '' },
+            { line: 15, code: '    Toll_System_Top dut (', explanation: 'Instantiates the Design Under Test (DUT), giving it the name `dut`.' },
+            { line: 16, code: '        .clk(clk),', explanation: 'Connects the testbench\'s `clk` reg to the DUT\'s `clk` port.' },
+            { line: 17, code: '        .reset(reset),', explanation: 'Connects the testbench\'s `reset` reg to the DUT\'s `reset` port.' },
+            { line: 18, code: '        .start_transaction(start_transaction),', explanation: 'Connects the testbench\'s `start_transaction` reg to the DUT\'s port.' },
+            { line: 19, code: '        .vehicle_id_in(vehicle_id_in),', explanation: 'Connects the testbench\'s `vehicle_id_in` reg to the DUT\'s port.' },
+            { line: 20, code: '        .gate_open(gate_open),', explanation: 'Connects the DUT\'s `gate_open` output to the testbench\'s wire.' },
+            { line: 21, code: '        .display_signal(display_signal),', explanation: 'Connects the DUT\'s `display_signal` output to the testbench\'s wire.' },
+            { line: 22, code: '        .transaction_status(transaction_status),', explanation: 'Connects the DUT\'s `transaction_status` output to the testbench\'s wire.' },
+            { line: 23, code: '        .transaction_done(transaction_done)', explanation: 'Connects the DUT\'s `transaction_done` output to the testbench\'s wire.' },
+            { line: 24, code: '    );', explanation: 'Ends the DUT instantiation.' },
+            { line: 25, code: '', explanation: '' },
+            { line: 26, code: '    initial begin', explanation: 'This `initial` block generates the clock signal.' },
+            { line: 27, code: '        clk = 0;', explanation: 'Initializes the clock to 0.' },
+            { line: 28, code: '        forever #0.5 clk = ~clk;', explanation: 'Continuously toggles the clock every 0.5ns, creating a 1ns period.' },
+            { line: 29, code: '    end', explanation: 'Ends the clock generation block.' },
+            { line: 30, code: '', explanation: '' },
+            { line: 31, code: '    initial begin', explanation: 'This `initial` block contains the main test sequence.' },
+            { line: 32, code: '        $dumpfile("dump.vcd");', explanation: 'Specifies the name of the waveform dump file for debugging.' },
+            { line: 33, code: '        $dumpvars(0, testbench);', explanation: 'Tells the simulator to record the values of all variables in the testbench.' },
+            { line: 34, code: '', explanation: '' },
+            { line: 35, code: '        $display("\\n--- Automatic Toll System Simulation (Final) ---");', explanation: 'Prints the simulation title.' },
+            { line: 36, code: '        $display("--- Toll Fee is set to 50 units ---\\n");', explanation: 'Prints the toll fee information.' },
+            { line: 37, code: '', explanation: '' },
+            { line: 38, code: '        reset = 1;', explanation: 'Begins the reset sequence by asserting `reset` high.' },
+            { line: 39, code: '        start_transaction = 0;', explanation: 'Initializes `start_transaction` to low.' },
+            { line: 40, code: '        vehicle_id_in = 0;', explanation: 'Initializes `vehicle_id_in` to 0.' },
+            { line: 41, code: '        #10;', explanation: 'Waits for 10ns while reset is active.' },
+            { line: 42, code: '        reset = 0;', explanation: 'De-asserts `reset` to allow the system to start.' },
+            { line: 43, code: '        $display("At time %0.2fns: Reset is released. System is IDLE.", $time);', explanation: 'Prints a message indicating the reset is complete.' },
+            { line: 44, code: '        #5;', explanation: 'Waits for 5ns for the system to stabilize after reset.' },
+            { line: 45, code: '', explanation: '' },
+            { line: 46, code: '        // --- Test Case 1: Vehicle with Sufficient Balance ---', explanation: 'Comment for the first test case.' },
+            { line: 47, code: '        $display("\\n--- Test Case 1: Vehicle with Sufficient Balance (ID: 02, Bal: 200) ---");', explanation: 'Prints the header for Test Case 1.' },
+            { line: 48, code: '        vehicle_id_in = 2;', explanation: 'Sets the vehicle ID to 2.' },
+            { line: 49, code: '        start_transaction = 1;', explanation: 'Starts the transaction.' },
+            { line: 50, code: '        #1;', explanation: 'Holds the start signal high for 1ns.' },
+            { line: 51, code: '        start_transaction = 0;', explanation: 'De-asserts the start signal, creating a pulse.' },
+            { line: 52, code: '        @(posedge transaction_done);', explanation: 'Event Control: Pauses simulation until `transaction_done` goes from 0 to 1.' },
+            { line: 53, code: '        if (transaction_status == 2\'b01) begin', explanation: 'Checks if the transaction status is PASS (01).' },
+            { line: 54, code: '            $display("At time %0.2fns: STATUS  -> Transaction PASSED correctly.", $time);', explanation: 'Prints the PASS status message with the current simulation time.' },
+            { line: 55, code: '            $display("At time %0.2fns: DISPLAY -> [GREEN] Have a safe journey!", $time);', explanation: 'Prints the GREEN display message.' },
+            { line: 56, code: '            $display("At time %0.2fns: ACTION  -> Gate is now OPEN.", $time);', explanation: 'Prints the GATE OPEN action message.' },
+            { line: 57, code: '        end else', explanation: 'If the status was not PASS...' },
+            { line: 58, code: '            $display("At time %0.2fns: STATUS  -> Transaction FAILED incorrectly.", $time);', explanation: '...it prints an error message.' },
+            { line: 59, code: '', explanation: '' },
+            { line: 60, code: '        #5;', explanation: 'Waits for 5ns between test cases.' },
+            { line: 61, code: '', explanation: '' },
+            { line: 62, code: '        // --- Test Case 2: Vehicle with Insufficient Balance ---', explanation: 'Comment for the second test case.' },
+            { line: 63, code: '        $display("\\n--- Test Case 2: Vehicle with Insufficient Balance (ID: 01, Bal: 40) ---");', explanation: 'Prints the header for Test Case 2.' },
+            { line: 64, code: '        vehicle_id_in = 1;', explanation: 'Sets the vehicle ID to 1.' },
+            { line: 65, code: '        start_transaction = 1;', explanation: 'Starts the second transaction.' },
+            { line: 66, code: '        #1;', explanation: 'Holds the start signal high for 1ns.' },
+            { line: 67, code: '        start_transaction = 0;', explanation: 'De-asserts the start signal.' },
+            { line: 68, code: '        @(posedge transaction_done);', explanation: 'Pauses simulation until the second transaction is done.' },
+            { line: 69, code: '        if (transaction_status == 2\'b10) begin', explanation: 'Checks if the transaction status is FAIL (10).' },
+            { line: 70, code: '             $display("At time %0.2fns: STATUS  -> Transaction BLOCKED correctly.", $time);', explanation: 'Prints the FAIL status message.' },
+            { line: 71, code: '             $display("At time %0.2fns: DISPLAY -> [RED] Insufficient Balance!", $time);', explanation: 'Prints the RED display message.' },
+            { line: 72, code: '             $display("At time %0.2fns: ACTION  -> Gate remains CLOSED.", $time);', explanation: 'Prints the GATE CLOSED action message.' },
+            { line: 73, code: '        end else', explanation: 'If the status was not FAIL...' },
+            { line: 74, code: '             $display("At time %0.2fns: STATUS  -> Transaction PASSED incorrectly.", $time);', explanation: '...it prints an error message.' },
+            { line: 75, code: '', explanation: '' },
+            { line: 76, code: '        #5;', explanation: 'Waits for 5ns between test cases.' },
+            { line: 77, code: '', explanation: '' },
+            { line: 78, code: '        // --- Test Case 3: Vehicle with Exact Balance ---', explanation: 'Comment for the third test case.' },
+            { line: 79, code: '        $display("\\n--- Test Case 3: Vehicle with Exact Balance (ID: 04, Bal: 50) ---");', explanation: 'Prints the header for Test Case 3.' },
+            { line: 80, code: '        vehicle_id_in = 4;', explanation: 'Sets the vehicle ID to 4.' },
+            { line: 81, code: '        start_transaction = 1;', explanation: 'Starts the third transaction.' },
+            { line: 82, code: '        #1;', explanation: 'Holds the start signal high for 1ns.' },
+            { line: 83, code: '        start_transaction = 0;', explanation: 'De-asserts the start signal.' },
+            { line: 84, code: '        @(posedge transaction_done);', explanation: 'Pauses simulation until the third transaction is done.' },
+            { line: 85, code: '        if (transaction_status == 2\'b01) begin', explanation: 'Checks if the transaction status is PASS.' },
+            { line: 86, code: '            $display("At time %0.2fns: STATUS  -> Transaction PASSED correctly.", $time);', explanation: 'Prints the PASS status message.' },
+            { line: 87, code: '            $display("At time %0.2fns: DISPLAY -> [GREEN] Have a safe journey!", $time);', explanation: 'Prints the GREEN display message.' },
+            { line: 88, code: '            $display("At time %0.2fns: ACTION  -> Gate is now OPEN. Balance updated.", $time);', explanation: 'Prints the GATE OPEN and balance update message.' },
+            { line: 89, code: '        end else', explanation: 'If the status was not PASS...' },
+            { line: 90, code: '            $display("At time %0.2fns: STATUS  -> Transaction FAILED incorrectly.", $time);', explanation: '...it prints an error message.' },
+            { line: 91, code: '', explanation: '' },
+            { line: 92, code: '        #5;', explanation: 'Waits for 5ns between test cases.' },
+            { line: 93, code: '', explanation: '' },
+            { line: 94, code: '        // --- Test Case 4: Re-checking Vehicle 4 to confirm deduction ---', explanation: 'Comment for the fourth test case.' },
+            { line: 95, code: '        $display("\\n--- Test Case 4: Re-checking Vehicle 4 to confirm deduction (Bal: 0) ---");', explanation: 'Prints the header for Test Case 4.' },
+            { line: 96, code: '        vehicle_id_in = 4;', explanation: 'Sets the vehicle ID to 4 again.' },
+            { line: 97, code: '        start_transaction = 1;', explanation: 'Starts the fourth transaction.' },
+            { line: 98, code: '        #1;', explanation: 'Holds the start signal high for 1ns.' },
+            { line: 99, code: '        start_transaction = 0;', explanation: 'De-asserts the start signal.' },
+            { line: 100, code: '        @(posedge transaction_done);', explanation: 'Pauses simulation until the fourth transaction is done.' },
+            { line: 101, code: '        if (transaction_status == 2\'b10) begin', explanation: 'Checks if the transaction status is FAIL.' },
+            { line: 102, code: '             $display("At time %0.2fns: STATUS  -> Transaction BLOCKED correctly (Balance is now 0).", $time);', explanation: 'Prints the FAIL status message confirming the new balance.' },
+            { line: 103, code: '             $display("At time %0.2fns: DISPLAY -> [RED] Insufficient Balance!", $time);', explanation: 'Prints the RED display message.' },
+            { line: 104, code: '             $display("At time %0.2fns: ACTION  -> Gate remains CLOSED.", $time);', explanation: 'Prints the GATE CLOSED action message.' },
+            { line: 105, code: '        end else', explanation: 'If the status was not FAIL...' },
+            { line: 106, code: '             $display("At time %0.2fns: STATUS  -> Transaction PASSED incorrectly.", $time);', explanation: '...it prints an error message.' },
+            { line: 107, code: '', explanation: '' },
+            { line: 108, code: '        #10;', explanation: 'Waits for 10ns before finishing.' },
+            { line: 109, code: '        $display("\\n--- Simulation Finished ---");', explanation: 'Prints the final simulation message.' },
+            { line: 110, code: '        $finish;', explanation: 'Ends the simulation.' },
+            { line: 111, code: '    end', explanation: 'Ends the main test sequence block.' },
+            { line: 112, code: 'endmodule', explanation: 'Ends the testbench module definition.' }
+        ]
+    };
+    
+    function createCodeBlock(data, fileId) {
+        const container = document.getElementById(`${fileId}-content`);
+        if (!container) return;
+        container.innerHTML = '';
+        const wrapper = document.createElement('div');
+        wrapper.className = 'grid grid-cols-1 md:grid-cols-2 gap-8';
+        const codeCol = document.createElement('div');
+        const pre = document.createElement('pre');
+        pre.className = 'bg-slate-800 text-white p-4 rounded-lg text-sm overflow-x-auto';
+        const code = document.createElement('code');
+        code.className = 'font-code';
+        const explanationCol = document.createElement('div');
+        explanationCol.className = 'max-h-[600px] overflow-y-auto rounded-lg bg-slate-50 border p-1';
+        data.forEach(item => {
+            const codeLine = document.createElement('div');
+            codeLine.className = 'code-line';
+            codeLine.dataset.lineId = `${fileId}-${item.line}`;
+            codeLine.textContent = item.code;
+            code.appendChild(codeLine);
+            const explanationLine = document.createElement('div');
+            explanationLine.className = 'explanation-line p-3 rounded-md transition';
+            explanationLine.dataset.lineId = `${fileId}-${item.line}`;
+            if (item.explanation) {
+                 explanationLine.innerHTML = `<span class="font-code font-medium text-slate-500 mr-2">[${item.line.toString().padStart(2,' ')}]</span> ${item.explanation}`;
+            } else {
+                explanationLine.innerHTML = `<span class="font-code font-medium text-slate-500 mr-2">[${item.line.toString().padStart(2,' ')}]</span>`;
+                explanationLine.classList.add('no-explanation');
+            }
+            explanationCol.appendChild(explanationLine);
+        });
+        pre.appendChild(code);
+        codeCol.appendChild(pre);
+        wrapper.appendChild(codeCol);
+        wrapper.appendChild(explanationCol);
+        container.appendChild(wrapper);
+        const lines = wrapper.querySelectorAll('[data-line-id]');
+        lines.forEach(line => {
+            line.addEventListener('mouseenter', () => {
+                const lineId = line.dataset.lineId;
+                wrapper.querySelectorAll(`[data-line-id="${lineId}"]`).forEach(el => el.classList.add('highlight'));
+            });
+            line.addEventListener('mouseleave', () => {
+                const lineId = line.dataset.lineId;
+                wrapper.querySelectorAll(`[data-line-id="${lineId}"]`).forEach(el => el.classList.remove('highlight'));
+            });
+        });
+    }
+
+    document.addEventListener('DOMContentLoaded', () => {
+        // Create all code blocks but keep some hidden initially
+        createCodeBlock(codeData.controller, 'controller');
+        createCodeBlock(codeData.tb, 'tb');
+        createCodeBlock(codeData.memory, 'memory');
+        createCodeBlock(codeData.top, 'top');
+        
+        const tabs = document.querySelectorAll('.code-tab');
+        const panels = document.querySelectorAll('.code-panel');
+
+        tabs.forEach(tab => {
+            tab.addEventListener('click', () => {
+                tabs.forEach(t => {
+                    t.classList.remove('active-tab', 'text-blue-600', 'border-blue-600');
+                    t.classList.add('text-slate-500', 'hover:text-slate-700', 'border-transparent');
+                });
+
+                tab.classList.add('active-tab', 'text-blue-600', 'border-blue-600');
+                tab.classList.remove('text-slate-500', 'hover:text-slate-700', 'border-transparent');
+                
+                const target = tab.getAttribute('data-target');
+                
+                panels.forEach(panel => {
+                    panel.id === `${target}-content` ? panel.classList.remove('hidden') : panel.classList.add('hidden');
+                });
+            });
+        });
+        
+        // Set the initial active tab
+        document.querySelector('.code-tab[data-target="controller"]').click();
+    });
+</script>
+
+</body>
+</html>
+
